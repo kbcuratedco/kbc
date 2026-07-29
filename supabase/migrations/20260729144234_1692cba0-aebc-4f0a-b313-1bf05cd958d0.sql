@@ -1,0 +1,1 @@
+ALTER ROLE anon SET statement_timeout = '15s'; ALTER ROLE authenticated SET statement_timeout = '15s';
