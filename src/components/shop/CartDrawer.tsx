@@ -26,6 +26,7 @@ export function CartDrawer() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
+  const [zip, setZip] = useState("");
   const [pickup, setPickup] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const submit = useServerFn(submitOrderRequest);
@@ -44,6 +45,10 @@ export function CartDrawer() {
       toast.error("Please add your name and email so I can send your invoice.");
       return;
     }
+    if (!pickup && !zip.trim()) {
+      toast.error("Please enter a delivery zip code for shipping.");
+      return;
+    }
     setSubmitting(true);
     try {
       await submit({
@@ -52,6 +57,7 @@ export function CartDrawer() {
           customerEmail: email.trim(),
           notes: notes.trim() || undefined,
           pickup,
+          zipCode: zip.trim() || undefined,
           subtotal: total,
           shipping,
           total: grandTotal,
@@ -252,6 +258,13 @@ export function CartDrawer() {
               <Label htmlFor="req-email">Email for invoice</Label>
               <Input id="req-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
             </div>
+            {!pickup && (
+              <div className="space-y-1.5">
+                <Label htmlFor="req-zip">Zip code</Label>
+                <Input id="req-zip" value={zip} onChange={(e) => setZip(e.target.value)} placeholder="77002" />
+                <p className="text-xs text-muted-foreground">Required for shipping estimates and invoice details.</p>
+              </div>
+            )}
             <div className="space-y-1.5">
               <Label htmlFor="req-notes">Notes (optional)</Label>
               <Textarea id="req-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything else I should know?" rows={3} />

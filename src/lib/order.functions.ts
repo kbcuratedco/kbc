@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { sendLovableEmail, EmailAPIError } from "@lovable.dev/email-js";
+import Resend from "resend";
 
 const personalizationSchema = z
   .object({
@@ -35,20 +35,56 @@ const itemSchema = z.object({
   bannerDetails: bannerDetailsSchema,
 });
 
-const payloadSchema = z.object({
-  customerName: z.string().trim().min(1).max(120),
-  customerEmail: z.string().trim().email().max(200),
-  notes: z.string().max(2000).optional(),
-  pickup: z.boolean(),
-  subtotal: z.number().nonnegative(),
-  shipping: z.number().nonnegative(),
-  total: z.number().nonnegative(),
-  items: z.array(itemSchema).min(1).max(50),
-});
+const payloadSchema = z
+  .object({
+    customerName: z.string().trim().min(1).max(120),
+    customerEmail: z.string().trim().email().max(200),
+    notes: z.string().max(2000).optional(),
+    pickup: z.boolean(),
+    zipCode: z.string().trim().max(20).optional(),
+    subtotal: z.number().nonnegative(),
+    shipping: z.number().nonnegative(),
+    total: z.number().nonnegative(),
+    items: z.array(itemSchema).min(1).max(50),
+  })
+  .refine((data) => data.pickup || Boolean(data.zipCode?.trim()), {
+    message: "Zip code is required for shipping.",
+    path: ["zipCode"],
+  });
 
 export type OrderRequestPayload = z.infer<typeof payloadSchema>;
 
 const RECIPIENT = "orders@kbcuratedco.com";
+
+function isBusinessDay(date: Date) {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+}
+
+function addBusinessDays(startDate: Date, businessDays: number) {
+  const date = new Date(startDate);
+  let added = 0;
+  while (added < businessDays) {
+    date.setDate(date.getDate() + 1);
+    if (isBusinessDay(date)) {
+      added += 1;
+    }
+  }
+  return date;
+}
+
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getEarliestDeliveryDate(): string {
+  const now = new Date();
+  const businessDays = now.getHours() >= 15 ? 4 : 3;
+  return formatLocalDate(addBusinessDays(now, businessDays));
+}
 
 function dataUrlToBuffer(dataUrl: string): { buffer: Uint8Array; contentType: string; ext: string } | null {
   const m = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
@@ -158,6 +194,8 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
           <div style="padding:24px 28px">
             <p style="margin:0 0 8px"><strong>From:</strong> ${escape(data.customerName)} &lt;${escape(data.customerEmail)}&gt;</p>
             <p style="margin:0 0 8px"><strong>Fulfillment:</strong> ${data.pickup ? "Houston local pickup" : "Ship"}</p>
+            ${!data.pickup && data.zipCode ? `<p style="margin:0 0 8px"><strong>Zip code:</strong> ${escape(data.zipCode)}</p>` : ""}
+            ${!data.pickup ? `<p style="margin:0 0 12px;font-style:italic;color:#555;font-size:13px">Earliest delivery date estimate: ${escape(getEarliestDeliveryDate())}</p>` : ""}
             ${data.notes ? `<p style="margin:0 0 12px"><strong>Notes:</strong> ${escape(data.notes)}</p>` : ""}
             <table style="width:100%;border-collapse:collapse;margin-top:8px">${rows}</table>
             <table style="width:100%;margin-top:12px;font-size:14px">
@@ -172,7 +210,9 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
 
     const text = `New order request from ${data.customerName} <${data.customerEmail}>
 Fulfillment: ${data.pickup ? "Houston local pickup" : "Ship"}
-${data.notes ? `Notes: ${data.notes}\n` : ""}
+${!data.pickup && data.zipCode ? `Zip code: ${data.zipCode}
+` : ""}${!data.pickup ? `Earliest delivery date estimate: ${getEarliestDeliveryDate()}
+` : ""}${data.notes ? `Notes: ${data.notes}\n` : ""}
 Items:
 ${processedItems
   .map(
@@ -197,36 +237,22 @@ Subtotal: $${data.subtotal.toFixed(2)}
 Shipping: $${data.shipping.toFixed(2)}
 Total: $${data.total.toFixed(2)}`;
 
-    // Send via Lovable managed email API
-    const apiKey = process.env.LOVABLE_API_KEY;
-    if (!apiKey) throw new Error("Email service is not configured yet.");
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) throw new Error("Email service is not configured yet.");
 
+    const resend = new Resend(resendApiKey);
     try {
-      await sendLovableEmail(
-        {
-          from: "KB Curated Co <orders@notify.kbcuratedco.com>",
-          to: RECIPIENT,
-          reply_to: data.customerEmail,
-          subject: `New order request from ${data.customerName} — $${data.total.toFixed(2)}`,
-          html,
-          text,
-        },
-        { apiKey, idempotencyKey: orderId },
-      );
+      await resend.emails.send({
+        from: `KB Curated Co <${RECIPIENT}>`,
+        to: RECIPIENT,
+        reply_to: data.customerEmail,
+        subject: `New order request from ${data.customerName} — $${data.total.toFixed(2)}`,
+        html,
+        text,
+      });
     } catch (err) {
-      if (err instanceof EmailAPIError) {
-        console.error("email send failed", err.status, err.code, err.message);
-        if (err.code === "domain_not_verified" || err.code === "emails_disabled") {
-          throw new Error(
-            "Email sending isn't active yet — the sender domain is still being set up. Your request wasn't sent.",
-          );
-        }
-        if (err.status === 429) {
-          throw new Error("Too many requests right now — please try again in a minute.");
-        }
-        throw new Error(`Couldn't send the order email (${err.status}). Please try again in a moment.`);
-      }
-      throw err;
+      console.error("email send failed", err);
+      throw new Error("Couldn't send the order email. Please try again in a moment.");
     }
 
     return { ok: true as const };

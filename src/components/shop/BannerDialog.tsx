@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,54 @@ import { Upload, X } from "lucide-react";
 import { BANNER_SIZES, type Product, type BannerSizeId } from "@/lib/products";
 import { addToCart } from "@/lib/shop-store";
 import { uploadResizedImageFile } from "@/lib/image-utils";
+
+const MAX_INSPO_FILE_SIZE = 8 * 1024 * 1024; // 8 MB
+
+function isBusinessDay(date: Date) {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+}
+
+function addBusinessDays(startDate: Date, businessDays: number) {
+  const date = new Date(startDate);
+  let added = 0;
+  while (added < businessDays) {
+    date.setDate(date.getDate() + 1);
+    if (isBusinessDay(date)) {
+      added += 1;
+    }
+  }
+  return date;
+}
+
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getMinSelectableDate() {
+  const now = new Date();
+  const businessDays = now.getHours() >= 15 ? 4 : 3;
+  return formatLocalDate(addBusinessDays(now, businessDays));
+}
+
+function parseLocalDate(value: string): Date | null {
+  const parts = value.split("-");
+  if (parts.length !== 3) return null;
+  const [year, month, day] = parts.map((part) => Number(part));
+  if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) return null;
+  const date = new Date(year, month - 1, day);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  return date;
+}
+
+function isDateAllowed(value: string, minDate: string) {
+  const selectedDate = parseLocalDate(value);
+  const minSelectableDate = parseLocalDate(minDate);
+  return selectedDate !== null && minSelectableDate !== null && selectedDate >= minSelectableDate;
+}
 
 export function BannerDialog({
   product,
@@ -26,13 +74,23 @@ export function BannerDialog({
   const [theme, setTheme] = useState("");
   const [inspo, setInspo] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [dateError, setDateError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const minDate = useMemo(() => getMinSelectableDate(), []);
+  const helperText = `Choose a delivery date on or after ${minDate}. Weekends are not available.`;
 
   const price = BANNER_SIZES.find((s) => s.id === size)!.price;
 
   const onFiles = async (files: FileList | null) => {
     if (!files) return;
     const list = Array.from(files).slice(0, 4 - inspo.length);
+    const oversized = list.some((file) => file.size > MAX_INSPO_FILE_SIZE);
+    if (oversized) {
+      toast.error("One or more files are too large. Please keep inspo photos under 8 MB each.");
+      return;
+    }
+
     setUploading(true);
     try {
       const results = await Promise.all(list.map((f) => uploadResizedImageFile(f)));
@@ -49,6 +107,12 @@ export function BannerDialog({
       toast.error("Please fill in the date, name, and theme.");
       return;
     }
+    if (!isDateAllowed(dateNeeded, minDate)) {
+      setDateError(`Date must be on or after ${minDate} and must be a business day.`);
+      toast.error(`Please choose a date on or after ${minDate} that is not a weekend.`);
+      return;
+    }
+    setDateError("");
     try {
       addToCart({
         productId: product.id,
@@ -109,7 +173,22 @@ export function BannerDialog({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="date">Date needed</Label>
-              <Input id="date" type="date" value={dateNeeded} onChange={(e) => setDateNeeded(e.target.value)} />
+              <Input
+                id="date"
+                type="date"
+                value={dateNeeded}
+                min={minDate}
+                onChange={(e) => {
+                  setDateNeeded(e.target.value);
+                  if (e.target.value && !isDateAllowed(e.target.value, minDate)) {
+                    setDateError(`Date must be on or after ${minDate} and must be a business day.`);
+                  } else {
+                    setDateError("");
+                  }
+                }}
+              />
+              <p className="text-xs text-muted-foreground">{helperText}</p>
+              {dateError ? <p className="text-xs text-destructive">{dateError}</p> : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="bname">Name on banner</Label>
