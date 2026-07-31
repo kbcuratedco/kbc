@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import Resend from "resend";
+import { Resend } from "resend";
 
 const personalizationSchema = z
   .object({
