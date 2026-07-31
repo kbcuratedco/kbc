@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const schema = z.object({
   base64: z.string().min(1).max(8_000_000),
@@ -9,7 +10,6 @@ const schema = z.object({
 export const uploadInspoImage = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => schema.parse(d))
   .handler(async ({ data }) => {
-    import { supabase } from "@/integrations/supabase/client";
     const bin = atob(data.base64);
     const buf = new Uint8Array(bin.length);
     for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
