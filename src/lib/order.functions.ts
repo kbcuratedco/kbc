@@ -101,27 +101,29 @@ function dataUrlToBuffer(dataUrl: string): { buffer: Uint8Array; contentType: st
 export const submitOrderRequest = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => payloadSchema.parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // RLS-safe storage client (publishable key only) — replaces the old
+    // supabaseAdmin/service-role approach, which this environment's RLS
+    // restrictions no longer allow.
+    const { getInspoStorageClient, buildOrderPath, uploadAndSign } = await import(
+      "@/lib/inspo-storage.server"
+    );
+    const { client: inspoClient } = await getInspoStorageClient();
     const orderId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 
-    // Upload inspo images -> signed URLs (7 days)
+    // Upload inspo images -> signed URLs. Path is built once and reused for
+    // both upload and signing so they can never diverge.
     async function uploadDataUrl(dataUrl: string, label: string, idx: number): Promise<string | null> {
       // Already a URL (uploaded at add-to-cart time) — pass straight through.
       if (/^https?:\/\//i.test(dataUrl)) return dataUrl;
       const parsed = dataUrlToBuffer(dataUrl);
       if (!parsed) return null;
-      const path = `${orderId}/${label}-${idx}.${parsed.ext}`;
-      const up = await supabaseAdmin.storage
-        .from("order-inspo")
-        .upload(path, parsed.buffer, { contentType: parsed.contentType, upsert: true });
-      if (up.error) {
-        console.error("inspo upload failed", up.error);
+      const path = buildOrderPath(orderId, idx, parsed.contentType);
+      try {
+        return await uploadAndSign(path, parsed.buffer, parsed.contentType, inspoClient);
+      } catch (err) {
+        console.error("inspo upload failed", label, err);
         return null;
       }
-      const signed = await supabaseAdmin.storage
-        .from("order-inspo")
-        .createSignedUrl(path, 60 * 60 * 24 * 7);
-      return signed.data?.signedUrl ?? null;
     }
 
     const processedItems = await Promise.all(
@@ -203,7 +205,7 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
               <tr><td>Shipping</td><td style="text-align:right">$${data.shipping.toFixed(2)}</td></tr>
               <tr><td style="padding-top:6px;font-weight:700;font-size:16px">Estimated total</td><td style="padding-top:6px;text-align:right;font-weight:700;font-size:16px">$${data.total.toFixed(2)}</td></tr>
             </table>
-            <p style="margin-top:20px;color:#7a5c56;font-size:12px">Inspo photo links expire in 7 days. Reply to this email to reach ${escape(data.customerName)}.</p>
+            <p style="margin-top:20px;color:#7a5c56;font-size:12px">Inspo photo links expire in 90 days. Reply to this email to reach ${escape(data.customerName)}.</p>
           </div>
         </div>
       </div>`;
