@@ -1,38 +1,45 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
-const schema = z.object({
-  base64: z.string().min(1).max(8_000_000),
-  contentType: z.string().max(80).default("image/jpeg"),
-});
-
 export const uploadInspoImage = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => schema.parse(d))
+  .validator(
+    (data: {
+      contentType: string;
+      base64: string;
+    }) => data
+  )
   .handler(async ({ data }) => {
-    const bin = atob(data.base64);
-    const buf = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-    const ext = data.contentType.split("/")[1]?.split("+")[0] ?? "jpg";
-    const path = `pending/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
-const up = await supabase.storage
-  .from("order-inspo")
-  .upload(path, buf, {
-    contentType: data.contentType,
-    upsert: false,
-  });
+    const bytes = Buffer.from(data.base64, "base64");
 
-console.log("UPLOAD RESULT:", JSON.stringify(up, null, 2));
+    const filename = `${crypto.randomUUID()}.${data.contentType.split("/")[1]}`;
 
-if (up.error) {
-  console.error("UPLOAD ERROR:", JSON.stringify(up.error, null, 2));
-  throw up.error;
-}
-    // 90 days — customers usually submit the cart within minutes, but this
-    // keeps the link alive if they close the tab and come back later.
+    const up = await supabase.storage
+      .from("order-inspo")
+      .upload(filename, bytes, {
+        contentType: data.contentType,
+        upsert: false,
+      });
+
+    if (up.error) {
+      console.error("Upload error:", up.error);
+      throw up.error;
+    }
+
+    console.log("Upload succeeded:", up.data);
+
     const signed = await supabase.storage
       .from("order-inspo")
-      .createSignedUrl(path, 60 * 60 * 24 * 90);
-    if (!signed.data?.signedUrl) throw new Error("Could not sign uploaded image");
-    return { url: signed.data.signedUrl };
+      .createSignedUrl(up.data.path, 60 * 60);
+
+    if (signed.error) {
+      console.error("Signed URL error:", signed.error);
+      console.error("Uploaded path:", up.data.path);
+      throw signed.error;
+    }
+
+    console.log("Signed URL created:", signed.data);
+
+    return {
+      url: signed.data.signedUrl,
+    };
   });
