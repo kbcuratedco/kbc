@@ -15,10 +15,19 @@ export const uploadInspoImage = createServerFn({ method: "POST" })
     for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
     const ext = data.contentType.split("/")[1]?.split("+")[0] ?? "jpg";
     const path = `pending/${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
-    const up = await supabaseAdmin.storage
-      .from("order-inspo")
-      .upload(path, buf, { contentType: data.contentType, upsert: false });
-    if (up.error) throw new Error(up.error.message);
+const up = await supabaseAdmin.storage
+  .from("order-inspo")
+  .upload(path, buf, {
+    contentType: data.contentType,
+    upsert: false,
+  });
+
+console.log("UPLOAD RESULT:", JSON.stringify(up, null, 2));
+
+if (up.error) {
+  console.error("UPLOAD ERROR:", JSON.stringify(up.error, null, 2));
+  throw up.error;
+}
     // 90 days — customers usually submit the cart within minutes, but this
     // keeps the link alive if they close the tab and come back later.
     const signed = await supabaseAdmin.storage
