@@ -50,8 +50,8 @@ function AmazonFinds() {
             product: get(row, "product"),
             category: get(row, "category"),
             description: get(row, "description"),
-            imageUrl: get(row, "image url"),
-            amazonUrl: get(row, "amazon affiliate link"),
+            imageUrl: get(row, "image"),
+            amazonUrl: get(row, "url"),
           }))
           .filter((item) => item.active && item.product && item.amazonUrl);
 
