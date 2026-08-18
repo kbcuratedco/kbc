@@ -20,6 +20,7 @@ type Find = {
 function AmazonFinds() {
   const [finds, setFinds] = useState<Find[]>([]);
   const [error, setError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     fetch(SHEET_URL)
@@ -79,7 +80,22 @@ function AmazonFinds() {
             Things I&apos;m loving, using &amp; gifting lately.
           </p>
         </header>
-
+<div className="mb-10 flex justify-center">
+  <select
+    value={selectedCategory}
+    onChange={(e) => setSelectedCategory(e.target.value)}
+    className="rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-medium shadow-sm outline-none"
+  >
+    <option value="All">Shop by Category</option>
+    {Array.from(new Set(finds.map((item) => item.category).filter(Boolean))).map(
+      (category) => (
+        <option key={category} value={category}>
+          {category}
+        </option>
+      )
+    )}
+  </select>
+</div>
         {error && (
           <p className="mb-8 text-center text-red-600">
             {error}
@@ -93,7 +109,11 @@ function AmazonFinds() {
         )}
 
         <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-          {finds.map((item) => (
+          {finds.filter(
+    (item) =>
+      selectedCategory === "All" ||
+      item.category === selectedCategory
+  ).map((item) => (
             <article
               key={item.product}
               className="overflow-hidden rounded-2xl border border-gray-200"
