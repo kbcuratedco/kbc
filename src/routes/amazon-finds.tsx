@@ -1,266 +1,141 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import logo from "@/assets/kbc-logo-transparent.png";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/amazon-finds")({
-  head: () => ({
-    meta: [
-      { title: "Amazon Finds — KB Curated Co" },
-      {
-        name: "description",
-        content:
-          "Things I'm loving, using and gifting lately, curated by KB Curated Co.",
-      },
-    ],
-  }),
   component: AmazonFinds,
 });
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/19l0GSs-S4-EFcvquQHU2mp-huLQ_rInPUkR_VVebsDc/gviz/tq?tqx=out:csv";
 
-type AmazonFind = {
+type Find = {
   active: boolean;
   product: string;
   category: string;
   description: string;
   imageUrl: string;
   amazonUrl: string;
-  asin: string;
 };
 
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let cell = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const next = text[i + 1];
-
-    if (char === '"' && inQuotes && next === '"') {
-      cell += '"';
-      i++;
-    } else if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === "," && !inQuotes) {
-      row.push(cell.trim());
-      cell = "";
-    } else if ((char === "\n" || char === "\r") && !inQuotes) {
-      if (char === "\r" && next === "\n") i++;
-
-      row.push(cell.trim());
-      if (row.some((value) => value !== "")) {
-        rows.push(row);
-      }
-
-      row = [];
-      cell = "";
-    } else {
-      cell += char;
-    }
-  }
-
-  if (cell || row.length) {
-    row.push(cell.trim());
-    if (row.some((value) => value !== "")) {
-      rows.push(row);
-    }
-  }
-
-  return rows;
-}
-
 function AmazonFinds() {
-  const [finds, setFinds] = useState<AmazonFind[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [finds, setFinds] = useState<Find[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadFinds() {
-      try {
-        const response = await fetch(SHEET_URL);
-        const csv = await response.text();
-        const rows = parseCsv(csv);
-
-        if (rows.length < 2) {
-          setFinds([]);
-          return;
+    fetch(SHEET_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Could not load the Amazon Finds sheet.");
         }
+        return response.text();
+      })
+      .then((csv) => {
+        const rows = csv
+          .split(/\r?\n/)
+          .map((row) => row.split(",").map((cell) => cell.replace(/^"|"$/g, "").trim()));
 
-        const headers = rows[0].map((header) =>
-          header.toLowerCase().trim()
-        );
+        const headers = rows[0]?.map((h) => h.toLowerCase());
 
-        const getValue = (row: string[], name: string) => {
+        if (!headers) return;
+
+        const get = (row: string[], name: string) => {
           const index = headers.indexOf(name);
-          return index >= 0 ? row[index] ?? "" : "";
+          return index >= 0 ? row[index] || "" : "";
         };
 
         const products = rows
           .slice(1)
           .map((row) => ({
-            active: getValue(row, "active").toLowerCase() === "true",
-            product: getValue(row, "product"),
-            category: getValue(row, "category"),
-            description: getValue(row, "description"),
-            imageUrl: getValue(row, "image url"),
-            amazonUrl: getValue(row, "amazon affiliate link"),
-            asin: getValue(row, "asin"),
+            active: get(row, "active").toLowerCase() === "true",
+            product: get(row, "product"),
+            category: get(row, "category"),
+            description: get(row, "description"),
+            imageUrl: get(row, "image url"),
+            amazonUrl: get(row, "amazon affiliate link"),
           }))
           .filter((item) => item.active && item.product && item.amazonUrl);
 
         setFinds(products);
-      } catch (error) {
-        console.error("Unable to load Amazon Finds:", error);
-        setFinds([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadFinds();
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("I couldn't load the finds right now.");
+      });
   }, []);
 
-  const categories = useMemo(() => {
-    return [
-      "All",
-      ...Array.from(
-        new Set(finds.map((item) => item.category).filter(Boolean))
-      ),
-    ];
-  }, [finds]);
-
-  const visibleFinds =
-    activeCategory === "All"
-      ? finds
-      : finds.filter((item) => item.category === activeCategory);
-
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border/60 bg-background/90">
-        <div className="mx-auto flex max-w-5xl items-center justify-center px-4 py-5">
-          <a href="/">
-            <img
-              src={logo}
-              alt="KB Curated Co"
-              className="h-16 w-16 object-contain"
-            />
-          </a>
-        </div>
-      </header>
+    <main className="min-h-screen bg-white px-6 py-12 text-gray-900">
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-12 text-center">
+          <p className="mb-2 text-sm uppercase tracking-[0.25em]">
+            KB Curated Co
+          </p>
 
-      <main className="mx-auto max-w-5xl px-5 py-12 md:py-16">
-        <div className="mx-auto mb-10 max-w-2xl text-center">
-          <span className="font-script text-4xl text-primary">
-            KB Curated
-          </span>
-
-          <h1 className="mt-2 font-display text-5xl md:text-6xl">
+          <h1 className="text-5xl font-semibold">
             Amazon Finds
           </h1>
 
-          <p className="mt-5 text-lg text-muted-foreground">
+          <p className="mt-4 text-gray-500">
             Things I&apos;m loving, using &amp; gifting lately.
           </p>
-        </div>
+        </header>
 
-        {categories.length > 1 && (
-          <div className="mb-10 flex gap-2 overflow-x-auto pb-2 justify-center">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
-                  activeCategory === category
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-foreground hover:bg-muted/70"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+        {error && (
+          <p className="mb-8 text-center text-red-600">
+            {error}
+          </p>
         )}
 
-        {loading ? (
-          <div className="py-20 text-center text-muted-foreground">
+        {finds.length === 0 && !error && (
+          <p className="text-center text-gray-500">
             Loading my finds...
-          </div>
-        ) : visibleFinds.length === 0 ? (
-          <div className="rounded-2xl border border-border/60 bg-muted/20 p-12 text-center text-muted-foreground">
-            Check back soon for my favorite finds.
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-5 md:grid-cols-3">
-            {visibleFinds.map((item) => (
-              <article
-                key={`${item.product}-${item.asin}`}
-                className="overflow-hidden rounded-2xl border border-border/60 bg-background"
-              >
-                <div className="aspect-square bg-muted/40">
-                  {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.product}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center p-6 text-center text-sm text-muted-foreground">
-                      Product photo coming soon
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-4">
-                  {item.category && (
-                    <div className="mb-1 text-xs font-medium uppercase tracking-wider text-primary">
-                      {item.category}
-                    </div>
-                  )}
-
-                  <h2 className="font-display text-xl">
-                    {item.product}
-                  </h2>
-
-                  {item.description && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {item.description}
-                    </p>
-                  )}
-
-                  <a
-                    href={item.amazonUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-block text-sm font-medium text-primary underline underline-offset-4"
-                  >
-                    Shop on Amazon →
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+          </p>
         )}
 
-        <p className="mx-auto mt-12 max-w-xl text-center text-xs text-muted-foreground">
-          As an Amazon Associate, KB Curated Co may earn from qualifying
-          purchases.
-        </p>
-      </main>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
+          {finds.map((item) => (
+            <article
+              key={item.product}
+              className="overflow-hidden rounded-2xl border border-gray-200"
+            >
+              {item.imageUrl && (
+                <img
+                  src={item.imageUrl}
+                  alt={item.product}
+                  className="aspect-square w-full object-cover"
+                />
+              )}
 
-      <footer className="border-t border-border/60 px-4 py-10 text-center">
-        <img
-          src={logo}
-          alt="KB Curated Co"
-          className="mx-auto h-12 w-12 object-contain"
-        />
-        <p className="mt-3 text-sm text-muted-foreground">
-          © {new Date().getFullYear()} KB Curated Co
-        </p>
-      </footer>
-    </div>
+              <div className="p-4">
+                {item.category && (
+                  <p className="mb-1 text-xs uppercase tracking-wider text-gray-500">
+                    {item.category}
+                  </p>
+                )}
+
+                <h2 className="text-lg font-medium">
+                  {item.product}
+                </h2>
+
+                {item.description && (
+                  <p className="mt-2 text-sm text-gray-500">
+                    {item.description}
+                  </p>
+                )}
+
+                <a
+                  href={item.amazonUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block font-medium underline"
+                >
+                  Shop on Amazon →
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </main>
   );
 }
