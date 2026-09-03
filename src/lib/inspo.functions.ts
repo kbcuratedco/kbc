@@ -9,9 +9,8 @@ const schema = z.object({
 export const uploadInspoImage = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => schema.parse(d))
   .handler(async ({ data }) => {
-    const { getInspoStorageClient, buildUploadPath, uploadAndSign, base64ToBytes } = await import(
-      "@/lib/inspo-storage.server"
-    );
+    const { getInspoStorageClient, buildUploadPath, uploadAndSign, base64ToBytes } =
+      await import("@/lib/inspo-storage.server");
     // userId comes from the verified bearer token, never from the request body.
     const { client, userId } = await getInspoStorageClient();
     const path = buildUploadPath(userId, data.contentType);

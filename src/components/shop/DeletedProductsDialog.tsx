@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useDeletedProducts, useRestoreDeletedProduct } from "@/lib/product-store";
 import { toast } from "sonner";
@@ -27,7 +33,8 @@ export function DeletedProductsDialog({
         <DialogHeader>
           <DialogTitle className="font-display text-2xl">Restore deleted products</DialogTitle>
           <DialogDescription>
-            These titles are blocked from importing so they don't come back by mistake. Restore one to allow it again — it won't reappear on its own, you can then re-add or re-import it.
+            These titles are blocked from importing so they don't come back by mistake. Restore one
+            to allow it again — it won't reappear on its own, you can then re-add or re-import it.
           </DialogDescription>
         </DialogHeader>
         {isLoading ? (

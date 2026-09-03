@@ -86,7 +86,9 @@ function getEarliestDeliveryDate(): string {
   return formatLocalDate(addBusinessDays(now, businessDays));
 }
 
-function dataUrlToBuffer(dataUrl: string): { buffer: Uint8Array; contentType: string; ext: string } | null {
+function dataUrlToBuffer(
+  dataUrl: string,
+): { buffer: Uint8Array; contentType: string; ext: string } | null {
   const m = /^data:([^;]+);base64,(.+)$/.exec(dataUrl);
   if (!m) return null;
   const contentType = m[1];
@@ -104,15 +106,18 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
     // RLS-safe storage client (publishable key only) — replaces the old
     // supabaseAdmin/service-role approach, which this environment's RLS
     // restrictions no longer allow.
-    const { getInspoStorageClient, buildOrderPath, uploadAndSign } = await import(
-      "@/lib/inspo-storage.server"
-    );
+    const { getInspoStorageClient, buildOrderPath, uploadAndSign } =
+      await import("@/lib/inspo-storage.server");
     const { client: inspoClient } = await getInspoStorageClient();
     const orderId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 
     // Upload inspo images -> signed URLs. Path is built once and reused for
     // both upload and signing so they can never diverge.
-    async function uploadDataUrl(dataUrl: string, label: string, idx: number): Promise<string | null> {
+    async function uploadDataUrl(
+      dataUrl: string,
+      label: string,
+      idx: number,
+    ): Promise<string | null> {
       // Already a URL (uploaded at add-to-cart time) — pass straight through.
       if (/^https?:\/\//i.test(dataUrl)) return dataUrl;
       const parsed = dataUrlToBuffer(dataUrl);
@@ -130,13 +135,19 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
       data.items.map(async (item, i) => {
         let personalizationInspoUrl: string | null = null;
         if (item.personalization?.inspoImage) {
-          personalizationInspoUrl = await uploadDataUrl(item.personalization.inspoImage, `item${i}-name`, 0);
+          personalizationInspoUrl = await uploadDataUrl(
+            item.personalization.inspoImage,
+            `item${i}-name`,
+            0,
+          );
         }
         let bannerInspoUrls: string[] = [];
         if (item.bannerDetails?.inspoImages?.length) {
           bannerInspoUrls = (
             await Promise.all(
-              item.bannerDetails.inspoImages.map((img, j) => uploadDataUrl(img, `item${i}-banner`, j)),
+              item.bannerDetails.inspoImages.map((img, j) =>
+                uploadDataUrl(img, `item${i}-banner`, j),
+              ),
             )
           ).filter((u): u is string => !!u);
         }
@@ -151,21 +162,33 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
         const extras: string[] = [];
         if (item.personalization) {
           if (item.category === "sports") {
-            extras.push(`<div><strong>Child's name:</strong> ${escape(item.personalization.name)}</div>`);
+            extras.push(
+              `<div><strong>Child's name:</strong> ${escape(item.personalization.name)}</div>`,
+            );
             if (item.personalization.sportsDetails?.notes)
-              extras.push(`<div><strong>Team details:</strong> ${escape(item.personalization.sportsDetails.notes)}</div>`);
+              extras.push(
+                `<div><strong>Team details:</strong> ${escape(item.personalization.sportsDetails.notes)}</div>`,
+              );
           } else {
-            extras.push(`<div><strong>Personalize:</strong> ${escape(item.personalization.name)}</div>`);
+            extras.push(
+              `<div><strong>Personalize:</strong> ${escape(item.personalization.name)}</div>`,
+            );
             if (item.personalization.colorNotes)
-              extras.push(`<div><strong>Color/vibe:</strong> ${escape(item.personalization.colorNotes)}</div>`);
+              extras.push(
+                `<div><strong>Color/vibe:</strong> ${escape(item.personalization.colorNotes)}</div>`,
+              );
           }
           if (personalizationInspoUrl)
             extras.push(`<div><a href="${personalizationInspoUrl}">View inspo photo</a></div>`);
         }
         if (item.bannerDetails) {
           extras.push(`<div><strong>Size:</strong> ${escape(item.bannerSize ?? "")}</div>`);
-          extras.push(`<div><strong>Date needed:</strong> ${escape(item.bannerDetails.dateNeeded)}</div>`);
-          extras.push(`<div><strong>Name on banner:</strong> ${escape(item.bannerDetails.name)}</div>`);
+          extras.push(
+            `<div><strong>Date needed:</strong> ${escape(item.bannerDetails.dateNeeded)}</div>`,
+          );
+          extras.push(
+            `<div><strong>Name on banner:</strong> ${escape(item.bannerDetails.name)}</div>`,
+          );
           extras.push(`<div><strong>Theme:</strong> ${escape(item.bannerDetails.theme)}</div>`);
           if (bannerInspoUrls.length)
             extras.push(
@@ -212,9 +235,17 @@ export const submitOrderRequest = createServerFn({ method: "POST" })
 
     const text = `New order request from ${data.customerName} <${data.customerEmail}>
 Fulfillment: ${data.pickup ? "Houston local pickup" : "Ship"}
-${!data.pickup && data.zipCode ? `Zip code: ${data.zipCode}
-` : ""}${!data.pickup ? `Earliest delivery date estimate: ${getEarliestDeliveryDate()}
-` : ""}${data.notes ? `Notes: ${data.notes}\n` : ""}
+${
+  !data.pickup && data.zipCode
+    ? `Zip code: ${data.zipCode}
+`
+    : ""
+}${
+      !data.pickup
+        ? `Earliest delivery date estimate: ${getEarliestDeliveryDate()}
+`
+        : ""
+    }${data.notes ? `Notes: ${data.notes}\n` : ""}
 Items:
 ${processedItems
   .map(
@@ -223,9 +254,13 @@ ${processedItems
       (item.personalization
         ? item.category === "sports"
           ? `\n    Child's name: ${item.personalization.name}` +
-            (item.personalization.sportsDetails?.notes ? `\n    Team details: ${item.personalization.sportsDetails.notes}` : "")
+            (item.personalization.sportsDetails?.notes
+              ? `\n    Team details: ${item.personalization.sportsDetails.notes}`
+              : "")
           : `\n    Name: ${item.personalization.name}` +
-            (item.personalization.colorNotes ? `\n    Color: ${item.personalization.colorNotes}` : "")
+            (item.personalization.colorNotes
+              ? `\n    Color: ${item.personalization.colorNotes}`
+              : "")
         : "") +
       (personalizationInspoUrl ? `\n    Inspo: ${personalizationInspoUrl}` : "") +
       (item.bannerDetails

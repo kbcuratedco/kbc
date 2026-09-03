@@ -30,7 +30,6 @@ import {
 import { useAdminMode } from "@/lib/shop-store";
 import { supabase } from "@/integrations/supabase/client";
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -40,10 +39,14 @@ export const Route = createFileRoute("/")({
         content:
           "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
       },
-      { property: "og:title", content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls" },
+      {
+        property: "og:title",
+        content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls",
+      },
       {
         property: "og:description",
-        content: "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
+        content:
+          "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
       },
     ],
   }),
@@ -100,7 +103,8 @@ function Index() {
             : "No exact duplicates found.",
         );
       },
-      onError: (err) => toast?.error?.(err instanceof Error ? err.message : "Duplicate cleanup failed"),
+      onError: (err) =>
+        toast?.error?.(err instanceof Error ? err.message : "Duplicate cleanup failed"),
     });
   };
 
@@ -112,7 +116,9 @@ function Index() {
       <div className="border-b border-border/60 bg-primary/95 text-primary-foreground">
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-2 text-xs">
           <Heart className="h-3 w-3" />
-          <span className="font-body tracking-wide">Every piece is hand-drawn & hand-painted by Karen B — no two are alike.</span>
+          <span className="font-body tracking-wide">
+            Every piece is hand-drawn & hand-painted by Karen B — no two are alike.
+          </span>
         </div>
       </div>
 
@@ -123,7 +129,9 @@ function Index() {
             <img src={logo} alt="KB Curated Co" className="h-14 w-14 object-contain" />
             <div className="hidden sm:block">
               <div className="font-display text-2xl leading-none">KB Curated Co</div>
-              <div className="font-smallcaps text-[0.65rem] text-muted-foreground">art & maker market</div>
+              <div className="font-smallcaps text-[0.65rem] text-muted-foreground">
+                art & maker market
+              </div>
             </div>
           </a>
 
@@ -136,7 +144,9 @@ function Index() {
                   document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" });
                 }}
                 className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                  active === c ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  active === c
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
                 }`}
               >
                 {c === "all" ? "All" : CATEGORY_LABELS[c]}
@@ -146,13 +156,19 @@ function Index() {
 
           <div className="flex items-center gap-3">
             {mounted && (
-              <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex" title="Owner mode: edits save to your cloud shop">
+              <div
+                className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex"
+                title="Owner mode: edits save to your cloud shop"
+              >
                 <Cloud className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Owner mode</span>
                 <Switch checked={admin} onCheckedChange={setAdmin} />
                 {admin && !isAdmin && (
                   <>
-                    <Link to="/auth" className="ml-1 rounded-full bg-primary px-2.5 py-1 text-primary-foreground hover:bg-primary/90">
+                    <Link
+                      to="/auth"
+                      className="ml-1 rounded-full bg-primary px-2.5 py-1 text-primary-foreground hover:bg-primary/90"
+                    >
                       <LogIn className="mr-1 inline h-3 w-3" /> Sign in to edit
                     </Link>
                   </>
@@ -189,7 +205,16 @@ function Index() {
           {/* Three hand-drawn icons */}
           <div className="mt-10 flex items-center justify-center gap-14 text-primary md:gap-20">
             {/* Writing hand */}
-            <svg viewBox="0 0 64 64" className="h-14 w-14 md:h-16 md:w-16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              viewBox="0 0 64 64"
+              className="h-14 w-14 md:h-16 md:w-16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M12 44c4-2 8-1 12 1s7 4 12 3" />
               <path d="M28 42l14-20 6 4-14 20" />
               <path d="M42 22l4-5c1-1 3-1 4 0l2 2c1 1 1 3 0 4l-4 5" />
@@ -197,13 +222,35 @@ function Index() {
               <path d="M8 48c2 2 5 3 8 2" />
             </svg>
             {/* Banner flag */}
-            <svg viewBox="0 0 64 64" className="h-14 w-14 md:h-16 md:w-16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              viewBox="0 0 64 64"
+              className="h-14 w-14 md:h-16 md:w-16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M18 10v46" />
               <path d="M18 14c8-4 14 4 22 0 3-1 6-1 8 0v18c-2-1-5-1-8 0-8 4-14-4-22 0" />
-              <path d="M31 18l1.6 3.3 3.6.5-2.6 2.5.6 3.6L31 26.2l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" fill="currentColor" fillOpacity="0.15" />
+              <path
+                d="M31 18l1.6 3.3 3.6.5-2.6 2.5.6 3.6L31 26.2l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z"
+                fill="currentColor"
+                fillOpacity="0.15"
+              />
             </svg>
             {/* Baseball */}
-            <svg viewBox="0 0 64 64" className="h-14 w-14 md:h-16 md:w-16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              viewBox="0 0 64 64"
+              className="h-14 w-14 md:h-16 md:w-16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <circle cx="32" cy="32" r="20" />
               <path d="M17 22c3 3 4 7 4 10s-1 7-4 10" />
               <path d="M47 22c-3 3-4 7-4 10s1 7 4 10" />
@@ -213,14 +260,17 @@ function Index() {
           </div>
 
           <p className="mt-12 max-w-2xl font-display text-xl italic leading-relaxed text-foreground/70 md:text-2xl">
-            Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.
+            Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB
+            Curated Co. Every piece drawn by hand by Karen B.
           </p>
 
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Button
               size="lg"
               className="rounded-full"
-              onClick={() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               Shop the collection
             </Button>
@@ -228,7 +278,9 @@ function Index() {
               size="lg"
               variant="outline"
               className="rounded-full border-primary/40"
-              onClick={() => document.getElementById("story")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document.getElementById("story")?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               Meet the maker
             </Button>
@@ -262,7 +314,9 @@ function Index() {
               key={c}
               onClick={() => setActive(c)}
               className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition ${
-                active === c ? "bg-primary text-primary-foreground" : "bg-background text-foreground"
+                active === c
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background text-foreground"
               }`}
             >
               {c === "all" ? "All" : CATEGORY_LABELS[c]}
@@ -277,7 +331,9 @@ function Index() {
           <div>
             <span className="font-script text-4xl text-primary">the collection</span>
             <h2 className="font-display text-4xl">
-              {active === "all" ? "Everything, made by hand" : CATEGORY_LABELS[active as ProductCategory]}
+              {active === "all"
+                ? "Everything, made by hand"
+                : CATEGORY_LABELS[active as ProductCategory]}
             </h2>
           </div>
           {admin && isAdmin && (
@@ -352,20 +408,25 @@ function Index() {
       <section id="story" className="border-t border-border/60 bg-muted/30">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-[1fr_1.4fr] md:py-24">
           <div className="flex items-center justify-center p-4">
-            <img src={logo} alt="KB Curated Co logo" className="mx-auto h-80 w-80 object-contain md:h-96 md:w-96" />
+            <img
+              src={logo}
+              alt="KB Curated Co logo"
+              className="mx-auto h-80 w-80 object-contain md:h-96 md:w-96"
+            />
           </div>
           <div>
             <span className="font-script text-5xl text-primary">meet the maker</span>
             <h2 className="mt-1 font-display text-4xl leading-tight md:text-5xl">
-              Hi, I'm <em className="hand-underline not-italic">Karen B</em> — the artist behind KB Curated Co.
+              Hi, I'm <em className="hand-underline not-italic">Karen B</em> — the artist behind KB
+              Curated Co.
             </h2>
             <p className="mt-5 text-lg text-muted-foreground">
-              Every piece you see here begins with a pencil sketch and a paintbrush. I love creating colorful,
-              personalized artwork that helps families celebrate the people they love.
+              Every piece you see here begins with a pencil sketch and a paintbrush. I love creating
+              colorful, personalized artwork that helps families celebrate the people they love.
             </p>
             <p className="mt-4 text-lg text-muted-foreground">
-              Whether it's a birthday banner, custom stationery, or a hand-painted sports ball, each order is
-              made with care and painted just for you.
+              Whether it's a birthday banner, custom stationery, or a hand-painted sports ball, each
+              order is made with care and painted just for you.
             </p>
           </div>
         </div>
@@ -377,7 +438,9 @@ function Index() {
           <img src={logo} alt="" className="h-12 w-12" />
           <div className="font-display text-xl">KB Curated Co</div>
           <div className="font-smallcaps text-xs text-muted-foreground">art & maker market</div>
-          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Karen. Every piece hand-made with love.</p>
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Karen. Every piece hand-made with love.
+          </p>
         </div>
       </footer>
     </div>

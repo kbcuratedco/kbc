@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -79,16 +80,42 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "KB Curated Co — Handmade Stationery, Banners & Sports Balls" },
-      { name: "description", content: "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B." },
+      {
+        name: "description",
+        content:
+          "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
+      },
       { name: "author", content: "KB Curated Co" },
-      { property: "og:title", content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls" },
-      { property: "og:description", content: "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B." },
+      {
+        property: "og:title",
+        content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls",
+      },
+      {
+        property: "og:description",
+        content:
+          "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls" },
-      { name: "twitter:description", content: "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0360b580-0788-4261-827e-06c68b3f41f1" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0360b580-0788-4261-827e-06c68b3f41f1" },
+      {
+        name: "twitter:title",
+        content: "KB Curated Co — Handmade Stationery, Banners & Sports Balls",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Shop hand-painted stationery, custom banners, and one-of-a-kind sports balls by KB Curated Co. Every piece drawn by hand by Karen B.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0360b580-0788-4261-827e-06c68b3f41f1",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/0360b580-0788-4261-827e-06c68b3f41f1",
+      },
     ],
     links: [
       {
@@ -118,6 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <Analytics />
         <Scripts />
       </body>
     </html>
@@ -129,7 +157,9 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();

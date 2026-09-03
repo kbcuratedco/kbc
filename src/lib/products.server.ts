@@ -121,7 +121,11 @@ function sameProductKey(product: Pick<ProductRow, "title" | "category">) {
 }
 
 function productQualityScore(product: ProductRow) {
-  return [product.images?.length ?? 0, product.sort_order && product.sort_order > 0 ? 1 : 0, new Date(product.updated_at).getTime()];
+  return [
+    product.images?.length ?? 0,
+    product.sort_order && product.sort_order > 0 ? 1 : 0,
+    new Date(product.updated_at).getTime(),
+  ];
 }
 
 function isBetterProduct(candidate: ProductRow, current: ProductRow) {
@@ -138,7 +142,8 @@ function isBetterProduct(candidate: ProductRow, current: ProductRow) {
 function normalizeLegacyProducts(products: unknown[]) {
   return products.flatMap((product) => {
     if (!isRecord(product)) return [];
-    const images = textArray(product.images).length > 0 ? textArray(product.images) : textArray([product.image]);
+    const images =
+      textArray(product.images).length > 0 ? textArray(product.images) : textArray([product.image]);
     if (!product.title || images.length === 0) return [];
     const categoryResult = categorySchema.safeParse(product.category);
     const price = Number(product.price);
@@ -170,7 +175,11 @@ export async function listProductsHandler({ data }: { data: { activeOnly?: boole
 
 export async function getProductHandler({ data }: { data: { id: string } }) {
   const supabase = getPublicClient();
-  const { data: row, error } = await supabase.from("products").select("*").eq("id", data.id).single();
+  const { data: row, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", data.id)
+    .single();
   if (error) throw new Error(error.message);
   return row;
 }
@@ -206,14 +215,30 @@ export async function checkAdminHandler() {
   return { isAdmin: !!data };
 }
 
-export async function addProductHandler({ data, context }: { data: ProductInput; context: AuthContext }) {
+export async function addProductHandler({
+  data,
+  context,
+}: {
+  data: ProductInput;
+  context: AuthContext;
+}) {
   await assertAdmin(context.supabase, context.userId);
-  const { data: row, error } = await context.supabase.from("products").insert(toStoredProduct(data)).select().single();
+  const { data: row, error } = await context.supabase
+    .from("products")
+    .insert(toStoredProduct(data))
+    .select()
+    .single();
   if (error) throw new Error(error.message);
   return row;
 }
 
-export async function updateProductHandler({ data, context }: { data: UpdateProductInput; context: AuthContext }) {
+export async function updateProductHandler({
+  data,
+  context,
+}: {
+  data: UpdateProductInput;
+  context: AuthContext;
+}) {
   await assertAdmin(context.supabase, context.userId);
   const { id, ...patch } = data;
   const update = toProductPatch(patch);
@@ -247,7 +272,13 @@ export async function toggleProductActiveHandler({
   return row;
 }
 
-export async function removeProductHandler({ data, context }: { data: { id: string }; context: AuthContext }) {
+export async function removeProductHandler({
+  data,
+  context,
+}: {
+  data: { id: string };
+  context: AuthContext;
+}) {
   await assertAdmin(context.supabase, context.userId);
   const { data: rows, error } = await context.supabase
     .from("products")
@@ -285,7 +316,8 @@ export async function importFromLocalStorageHandler({
   const byTitle = new Map<string, ProductInsert>();
   normalized.forEach((product) => byTitle.set(titleCategoryKey(product), product));
   const allProducts = Array.from(byTitle.values());
-  if (allProducts.length === 0) return { imported: 0, updated: 0, skippedDuplicates: 0, skippedDeleted: 0 };
+  if (allProducts.length === 0)
+    return { imported: 0, updated: 0, skippedDuplicates: 0, skippedDeleted: 0 };
 
   // Filter out anything the owner has previously deleted.
   const { data: tombstones, error: tombError } = await context.supabase
@@ -298,10 +330,17 @@ export async function importFromLocalStorageHandler({
   const products = allProducts.filter((p) => !deletedKeys.has(titleCategoryKey(p)));
   const skippedDeleted = allProducts.length - products.length;
   if (products.length === 0) {
-    return { imported: 0, updated: 0, skippedDuplicates: normalized.length - allProducts.length, skippedDeleted };
+    return {
+      imported: 0,
+      updated: 0,
+      skippedDuplicates: normalized.length - allProducts.length,
+      skippedDeleted,
+    };
   }
 
-  const { data: existingRows, error: existingError } = await context.supabase.from("products").select("*");
+  const { data: existingRows, error: existingError } = await context.supabase
+    .from("products")
+    .select("*");
   if (existingError) throw new Error(existingError.message);
 
   const existingByTitle = new Map<string, ProductRow>();
@@ -316,7 +355,10 @@ export async function importFromLocalStorageHandler({
   for (const product of products) {
     const existing = existingByTitle.get(titleCategoryKey(product));
     if (existing) {
-      const { error } = await context.supabase.from("products").update(product).eq("id", existing.id);
+      const { error } = await context.supabase
+        .from("products")
+        .update(product)
+        .eq("id", existing.id);
       if (error) throw new Error(error.message);
       updated += 1;
     } else {

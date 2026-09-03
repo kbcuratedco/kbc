@@ -15,18 +15,17 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ category }) => {
-    const items = (category
-      ? PRODUCTS.filter((p) => p.category === category)
-      : PRODUCTS
-    ).map((p) => ({
-      id: p.id,
-      title: p.title,
-      category: p.category,
-      categoryLabel: CATEGORY_LABELS[p.category as ProductCategory],
-      price: p.price,
-      description: p.description,
-      image: p.image,
-    }));
+    const items = (category ? PRODUCTS.filter((p) => p.category === category) : PRODUCTS).map(
+      (p) => ({
+        id: p.id,
+        title: p.title,
+        category: p.category,
+        categoryLabel: CATEGORY_LABELS[p.category as ProductCategory],
+        price: p.price,
+        description: p.description,
+        image: p.image,
+      }),
+    );
     return {
       content: [{ type: "text", text: JSON.stringify(items, null, 2) }],
       structuredContent: { count: items.length, items },

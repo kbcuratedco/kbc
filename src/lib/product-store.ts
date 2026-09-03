@@ -79,7 +79,8 @@ export function useClaimAdmin() {
 export function useAddProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: Parameters<typeof addProductFn>[0]["data"]) => addProductFn({ data: input }),
+    mutationFn: (input: Parameters<typeof addProductFn>[0]["data"]) =>
+      addProductFn({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: PRODUCTS_KEY }),
   });
 }
@@ -87,7 +88,8 @@ export function useAddProduct() {
 export function useUpdateProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: Parameters<typeof updateProductFn>[0]["data"]) => updateProductFn({ data: input }),
+    mutationFn: (input: Parameters<typeof updateProductFn>[0]["data"]) =>
+      updateProductFn({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: PRODUCTS_KEY }),
   });
 }
@@ -95,7 +97,8 @@ export function useUpdateProduct() {
 export function useToggleProductActive() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: Parameters<typeof toggleProductActiveFn>[0]["data"]) => toggleProductActiveFn({ data: input }),
+    mutationFn: (input: Parameters<typeof toggleProductActiveFn>[0]["data"]) =>
+      toggleProductActiveFn({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: PRODUCTS_KEY }),
   });
 }
@@ -103,7 +106,8 @@ export function useToggleProductActive() {
 export function useRemoveProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: Parameters<typeof removeProductFn>[0]["data"]) => removeProductFn({ data: input }),
+    mutationFn: (input: Parameters<typeof removeProductFn>[0]["data"]) =>
+      removeProductFn({ data: input }),
     onSuccess: () => qc.invalidateQueries({ queryKey: PRODUCTS_KEY }),
   });
 }
@@ -142,7 +146,9 @@ export function useRestoreDeletedProduct() {
 
 // Legacy helpers kept for compatibility with components that still call them imperatively.
 // These are no-ops because products now live in the cloud. Use the mutation hooks above.
-export function addProduct(_p: Omit<StoredProduct, "id" | "active"> & { id?: string; active?: boolean }) {
+export function addProduct(
+  _p: Omit<StoredProduct, "id" | "active"> & { id?: string; active?: boolean },
+) {
   // no-op: replaced by useAddProduct
 }
 export function removeProduct(_id: string) {

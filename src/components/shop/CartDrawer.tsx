@@ -4,7 +4,14 @@ import { ShoppingBag, Trash2, Minus, Plus, FileText, Truck, MapPin } from "lucid
 import { useCart, removeFromCart, updateCartQty, clearCart } from "@/lib/shop-store";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -90,7 +97,10 @@ export function CartDrawer() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" className="relative gap-2 rounded-full border-primary/40 bg-background">
+        <Button
+          variant="outline"
+          className="relative gap-2 rounded-full border-primary/40 bg-background"
+        >
           <ShoppingBag className="h-4 w-4" />
           <span className="font-body">Cart</span>
           {count > 0 && (
@@ -128,14 +138,20 @@ export function CartDrawer() {
                       <div className="mt-0.5 space-y-0.5 text-xs text-muted-foreground">
                         <div>
                           {item.category === "sports" ? "Child:" : "Personalized:"}{" "}
-                          <span className="font-script text-foreground">{item.personalization.name}</span>
+                          <span className="font-script text-foreground">
+                            {item.personalization.name}
+                          </span>
                         </div>
                         {item.category === "sports"
                           ? item.personalization.sportsDetails?.notes && (
-                              <div className="line-clamp-3">Details: {item.personalization.sportsDetails.notes}</div>
+                              <div className="line-clamp-3">
+                                Details: {item.personalization.sportsDetails.notes}
+                              </div>
                             )
                           : item.personalization.colorNotes && (
-                              <div className="line-clamp-2">Color: {item.personalization.colorNotes}</div>
+                              <div className="line-clamp-2">
+                                Color: {item.personalization.colorNotes}
+                              </div>
                             )}
                         {item.personalization.inspoImage && (
                           <div className="flex items-center gap-1">
@@ -156,15 +172,23 @@ export function CartDrawer() {
                     )}
                     <div className="mt-2 flex items-center justify-between">
                       <div className="inline-flex items-center gap-2 rounded-full border border-border px-2 py-0.5">
-                        <button aria-label="Decrease" onClick={() => updateCartQty(item.key, item.quantity - 1)}>
+                        <button
+                          aria-label="Decrease"
+                          onClick={() => updateCartQty(item.key, item.quantity - 1)}
+                        >
                           <Minus className="h-3 w-3" />
                         </button>
                         <span className="w-4 text-center text-sm">{item.quantity}</span>
-                        <button aria-label="Increase" onClick={() => updateCartQty(item.key, item.quantity + 1)}>
+                        <button
+                          aria-label="Increase"
+                          onClick={() => updateCartQty(item.key, item.quantity + 1)}
+                        >
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
-                      <div className="font-medium">${(item.unitPrice * item.quantity).toFixed(2)}</div>
+                      <div className="font-medium">
+                        ${(item.unitPrice * item.quantity).toFixed(2)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -224,7 +248,8 @@ export function CartDrawer() {
                   <FileText className="h-3.5 w-3.5" /> Invoice-based checkout
                 </div>
                 <p className="mt-1">
-                  Every piece is hand-made to order. Submit your request and I'll confirm the details and email you an invoice for payment.
+                  Every piece is hand-made to order. Submit your request and I'll confirm the
+                  details and email you an invoice for payment.
                 </p>
               </div>
               <Button className="w-full" size="lg" onClick={() => setRequestOpen(true)}>
@@ -246,28 +271,53 @@ export function CartDrawer() {
           <DialogHeader>
             <DialogTitle className="font-display text-2xl">Request your order</DialogTitle>
             <DialogDescription>
-              I'll review your request, confirm details, and email you an invoice to complete payment. Nothing is charged today.
+              I'll review your request, confirm details, and email you an invoice to complete
+              payment. Nothing is charged today.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="req-name">Your name</Label>
-              <Input id="req-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
+              <Input
+                id="req-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Jane Doe"
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="req-email">Email for invoice</Label>
-              <Input id="req-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+              <Input
+                id="req-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@email.com"
+              />
             </div>
             {!pickup && (
               <div className="space-y-1.5">
                 <Label htmlFor="req-zip">Zip code</Label>
-                <Input id="req-zip" value={zip} onChange={(e) => setZip(e.target.value)} placeholder="77002" />
-                <p className="text-xs text-muted-foreground">Required for shipping estimates and invoice details.</p>
+                <Input
+                  id="req-zip"
+                  value={zip}
+                  onChange={(e) => setZip(e.target.value)}
+                  placeholder="77002"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Required for shipping estimates and invoice details.
+                </p>
               </div>
             )}
             <div className="space-y-1.5">
               <Label htmlFor="req-notes">Notes (optional)</Label>
-              <Textarea id="req-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything else I should know?" rows={3} />
+              <Textarea
+                id="req-notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Anything else I should know?"
+                rows={3}
+              />
             </div>
             <div className="flex items-baseline justify-between border-t border-border pt-3">
               <span className="text-muted-foreground text-sm">Estimated total</span>
@@ -275,7 +325,9 @@ export function CartDrawer() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setRequestOpen(false)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setRequestOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={submitRequest} disabled={submitting}>
               {submitting ? "Sending…" : "Send request"}
             </Button>

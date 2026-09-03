@@ -91,7 +91,9 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(safeNext)}` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth?next=${encodeURIComponent(safeNext)}`,
+          },
         });
         if (error) throw error;
         toast.success("Check your email to confirm your account.");
@@ -99,10 +101,14 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           if (/invalid.*credentials/i.test(error.message)) {
-            throw new Error("Wrong email or password. If you haven't signed up yet, tap 'Create an account'.");
+            throw new Error(
+              "Wrong email or password. If you haven't signed up yet, tap 'Create an account'.",
+            );
           }
           if (/email.*not.*confirm/i.test(error.message)) {
-            throw new Error("Please confirm your email first — check your inbox for the confirmation link.");
+            throw new Error(
+              "Please confirm your email first — check your inbox for the confirmation link.",
+            );
           }
           throw error;
         }
@@ -144,10 +150,10 @@ function AuthPage() {
             {checking
               ? "Checking your session…"
               : existingEmail
-              ? `Signed in as ${existingEmail}`
-              : mode === "signin"
-              ? "Sign in to continue"
-              : "Create an account to continue"}
+                ? `Signed in as ${existingEmail}`
+                : mode === "signin"
+                  ? "Sign in to continue"
+                  : "Create an account to continue"}
           </p>
         </div>
 
@@ -172,61 +178,61 @@ function AuthPage() {
           </div>
         ) : (
           <>
-        <Button
-          type="button"
-          variant="outline"
-          className="mt-6 w-full"
-          onClick={handleGoogle}
-          disabled={loading}
-        >
-          Continue with Google
-        </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-6 w-full"
+              onClick={handleGoogle}
+              disabled={loading}
+            >
+              Continue with Google
+            </Button>
 
-        <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-          <div className="h-px flex-1 bg-border" />
-          or
-          <div className="h-px flex-1 bg-border" />
-        </div>
+            <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
+              <div className="h-px flex-1 bg-border" />
+              or
+              <div className="h-px flex-1 bg-border" />
+            </div>
 
-        <form onSubmit={handleEmail} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-            />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {mode === "signin" ? "Sign in" : "Create account"}
-          </Button>
-        </form>
+            <form onSubmit={handleEmail} className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {mode === "signin" ? "Sign in" : "Create account"}
+              </Button>
+            </form>
 
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
-          <button
-            type="button"
-            className="text-primary underline-offset-4 hover:underline"
-            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          >
-            {mode === "signin" ? "Create an account" : "Sign in"}
-          </button>
-        </p>
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              {mode === "signin" ? "New here?" : "Already have an account?"}{" "}
+              <button
+                type="button"
+                className="text-primary underline-offset-4 hover:underline"
+                onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+              >
+                {mode === "signin" ? "Create an account" : "Sign in"}
+              </button>
+            </p>
           </>
         )}
       </div>

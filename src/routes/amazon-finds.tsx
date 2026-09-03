@@ -68,92 +68,74 @@ function AmazonFinds() {
     <main className="min-h-screen bg-white px-6 py-12 text-gray-900">
       <div className="mx-auto max-w-5xl">
         <header className="mb-12 text-center">
-          <p className="mb-2 text-sm uppercase tracking-[0.25em]">
-            KB Curated Co
-          </p>
+          <p className="mb-2 text-sm uppercase tracking-[0.25em]">KB Curated Co</p>
 
-          <h1 className="text-5xl font-semibold">
-            Amazon Finds
-          </h1>
+          <h1 className="text-5xl font-semibold">Amazon Finds</h1>
 
-          <p className="mt-4 text-gray-500">
-            Things I&apos;m loving, using &amp; gifting lately.
-          </p>
+          <p className="mt-4 text-gray-500">Things I&apos;m loving, using &amp; gifting lately.</p>
         </header>
-<div className="mb-10 flex justify-center">
-  <select
-    value={selectedCategory}
-    onChange={(e) => setSelectedCategory(e.target.value)}
-    className="rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-medium shadow-sm outline-none"
-  >
-    <option value="All">Shop by Category</option>
-    {Array.from(new Set(finds.map((item) => item.category).filter(Boolean))).map(
-      (category) => (
-        <option key={category} value={category}>
-          {category}
-        </option>
-      )
-    )}
-  </select>
-</div>
-        {error && (
-          <p className="mb-8 text-center text-red-600">
-            {error}
-          </p>
-        )}
+        <div className="mb-10 flex justify-center">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-medium shadow-sm outline-none"
+          >
+            <option value="All">Shop by Category</option>
+            {Array.from(new Set(finds.map((item) => item.category).filter(Boolean))).map(
+              (category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ),
+            )}
+          </select>
+        </div>
+        {error && <p className="mb-8 text-center text-red-600">{error}</p>}
 
         {finds.length === 0 && !error && (
-          <p className="text-center text-gray-500">
-            Loading my finds...
-          </p>
+          <p className="text-center text-gray-500">Loading my finds...</p>
         )}
 
         <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-          {finds.filter(
-    (item) =>
-      selectedCategory === "All" ||
-      item.category === selectedCategory
-  ).map((item) => (
-            <article
-              key={item.product}
-              className="overflow-hidden rounded-2xl border border-gray-200"
-            >
-              {item.imageUrl && (
-                <img
-                  src={item.imageUrl}
-                  alt={item.product}
-                  className="aspect-square w-full object-cover"
-                />
-              )}
-
-              <div className="p-4">
-                {item.category && (
-                  <p className="mb-1 text-xs uppercase tracking-wider text-gray-500">
-                    {item.category}
-                  </p>
+          {finds
+            .filter((item) => selectedCategory === "All" || item.category === selectedCategory)
+            .map((item) => (
+              <article
+                key={item.product}
+                className="overflow-hidden rounded-2xl border border-gray-200"
+              >
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.product}
+                    className="aspect-square w-full object-cover"
+                  />
                 )}
 
-                <h2 className="text-lg font-medium">
-                  {item.product}
-                </h2>
+                <div className="p-4">
+                  {item.category && (
+                    <p className="mb-1 text-xs uppercase tracking-wider text-gray-500">
+                      {item.category}
+                    </p>
+                  )}
 
-                {item.description && (
-                  <p className="mt-2 text-sm text-gray-500">
-                    {item.description}
-                  </p>
-                )}
+                  <h2 className="text-lg font-medium">{item.product}</h2>
 
-                <a
-                  href={item.amazonUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block font-medium underline"
-                >
-                  Shop on Amazon →
-                </a>
-              </div>
-            </article>
-          ))}
+                  {item.description && (
+                    <p className="mt-2 text-sm text-gray-500">{item.description}</p>
+                  )}
+
+                  <a
+                    href={item.amazonUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block font-medium underline"
+                  >
+                    Shop on Amazon →
+                  </a>
+                </div>
+              </article>
+            ))}
         </div>
       </div>
     </main>

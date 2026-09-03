@@ -27,8 +27,10 @@ export const PRODUCTS: Product[] = [
     title: "Boys Custom Stationery Set",
     category: "stationery",
     price: 25,
-    image: "https://i.etsystatic.com/64278780/r/il/7300eb/8095917575/il_340x270.8095917575_jem6.jpg",
-    description: "Variety notecards, 24 count. Hand-drawn designs for the little gentleman in your life.",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/7300eb/8095917575/il_340x270.8095917575_jem6.jpg",
+    description:
+      "Variety notecards, 24 count. Hand-drawn designs for the little gentleman in your life.",
     freeShipping: true,
   },
   {
@@ -36,7 +38,8 @@ export const PRODUCTS: Product[] = [
     title: "Girls Custom Stationery Set",
     category: "stationery",
     price: 25,
-    image: "https://i.etsystatic.com/64278780/r/il/9ec395/8045499826/il_340x270.8045499826_20wf.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/9ec395/8045499826/il_340x270.8045499826_20wf.jpg",
     description: "Variety notecards, 24 count. Playful hand-painted florals & motifs.",
     freeShipping: true,
   },
@@ -45,7 +48,8 @@ export const PRODUCTS: Product[] = [
     title: "Lemon Notecards",
     category: "stationery",
     price: 25,
-    image: "https://i.etsystatic.com/64278780/r/il/eacdf3/8093412077/il_340x270.8093412077_qsc0.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/eacdf3/8093412077/il_340x270.8093412077_qsc0.jpg",
     description: "Custom stationery set, 24 count. Sun-kissed lemon watercolors.",
     freeShipping: true,
   },
@@ -54,7 +58,8 @@ export const PRODUCTS: Product[] = [
     title: "Girl Bow Notecards",
     category: "stationery",
     price: 25,
-    image: "https://i.etsystatic.com/64278780/r/il/390c0a/8095919521/il_340x270.8095919521_j99t.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/390c0a/8095919521/il_340x270.8095919521_j99t.jpg",
     description: "Custom girl stationery set, 24 count. Sweet hand-drawn bows.",
     freeShipping: true,
   },
@@ -63,7 +68,8 @@ export const PRODUCTS: Product[] = [
     title: "Summer Camp Keep-in-Touch Card",
     category: "stationery",
     price: 7,
-    image: "https://i.etsystatic.com/64278780/r/il/bc48db/8216413186/il_340x270.8216413186_t3bf.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/bc48db/8216413186/il_340x270.8216413186_t3bf.jpg",
     description: "Digital download template for camp letters home.",
     digital: true,
   },
@@ -73,7 +79,8 @@ export const PRODUCTS: Product[] = [
     title: "Birthday Banner",
     category: "banner",
     price: 45,
-    image: "https://i.etsystatic.com/64278780/r/il/4c62c2/8080686983/il_340x270.8080686983_8yy8.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/4c62c2/8080686983/il_340x270.8080686983_8yy8.jpg",
     description: "Hand-painted birthday banner, made to your theme and colors.",
     freeShipping: true,
   },
@@ -82,7 +89,8 @@ export const PRODUCTS: Product[] = [
     title: "Holiday Banner",
     category: "banner",
     price: 45,
-    image: "https://i.etsystatic.com/64278780/r/il/5a347a/7641111754/il_340x270.7641111754_15hw.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/5a347a/7641111754/il_340x270.7641111754_15hw.jpg",
     description: "Custom holiday banner painted by hand for your celebration.",
     freeShipping: true,
   },
@@ -91,7 +99,8 @@ export const PRODUCTS: Product[] = [
     title: "School Banner",
     category: "banner",
     price: 45,
-    image: "https://i.etsystatic.com/64278780/r/il/1ab0f9/8080691361/il_340x270.8080691361_jcep.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/1ab0f9/8080691361/il_340x270.8080691361_jcep.jpg",
     description: "Back-to-school or milestone banner, personalized for your student.",
     freeShipping: true,
   },
@@ -100,7 +109,8 @@ export const PRODUCTS: Product[] = [
     title: "Game Day Banner",
     category: "banner",
     price: 45,
-    image: "https://i.etsystatic.com/64278780/r/il/ce2052/8080688947/il_340x270.8080688947_csdy.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/ce2052/8080688947/il_340x270.8080688947_csdy.jpg",
     description: "Bring on the spirit — banner in your team's colors and logos.",
     freeShipping: true,
   },
@@ -109,7 +119,8 @@ export const PRODUCTS: Product[] = [
     title: "School's Out Banner",
     category: "banner",
     price: 45,
-    image: "https://i.etsystatic.com/64278780/r/il/7760f0/8080693701/il_340x270.8080693701_ec2w.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/7760f0/8080693701/il_340x270.8080693701_ec2w.jpg",
     description: "End-of-school celebration banner, hand-painted just for the graduate.",
     freeShipping: true,
   },
@@ -119,7 +130,8 @@ export const PRODUCTS: Product[] = [
     title: "Custom Hand-Painted Sports Balls",
     category: "sports",
     price: 25,
-    image: "https://i.etsystatic.com/64278780/r/il/7af67e/8080579409/il_340x270.8080579409_tass.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/7af67e/8080579409/il_340x270.8080579409_tass.jpg",
     description: "Baseballs, softballs & more — painted by hand for your team.",
   },
   {
@@ -127,7 +139,8 @@ export const PRODUCTS: Product[] = [
     title: "Custom Hand-Painted Volleyballs",
     category: "sports",
     price: 55,
-    image: "https://i.etsystatic.com/64278780/r/il/d61c60/7641170266/il_340x270.7641170266_9iw1.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/d61c60/7641170266/il_340x270.7641170266_9iw1.jpg",
     description: "Regulation volleyballs hand-painted with player name, number, and team art.",
     freeShipping: true,
   },
@@ -136,7 +149,8 @@ export const PRODUCTS: Product[] = [
     title: "Custom Hand-Painted Footballs",
     category: "sports",
     price: 89.99,
-    image: "https://i.etsystatic.com/64278780/r/il/01da70/7689099693/il_340x270.7689099693_ot3i.jpg",
+    image:
+      "https://i.etsystatic.com/64278780/r/il/01da70/7689099693/il_340x270.7689099693_ot3i.jpg",
     description: "Full-size footballs, hand-painted with your player's design.",
     freeShipping: true,
   },

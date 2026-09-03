@@ -5,9 +5,7 @@
   "auth": {
     "type": "oauth",
     "issuer": "https://dfyptvwehxzpbbjgrwus.supabase.co/auth/v1",
-    "accepted_audiences": [
-      "authenticated"
-    ]
+    "accepted_audiences": ["authenticated"]
   },
   "mcp": {
     "server": {
@@ -32,11 +30,7 @@
             "category": {
               "description": "Filter by product category.",
               "type": "string",
-              "enum": [
-                "stationery",
-                "banner",
-                "sports"
-              ]
+              "enum": ["stationery", "banner", "sports"]
             }
           }
         },
@@ -60,9 +54,7 @@
               "description": "Product id, e.g. 'ban-birthday' or 'stat-boys'."
             }
           },
-          "required": [
-            "id"
-          ]
+          "required": ["id"]
         },
         "outputSchema": null
       },
