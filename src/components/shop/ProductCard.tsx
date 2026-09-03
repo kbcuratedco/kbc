@@ -67,7 +67,7 @@ export function ProductCard({ product }: { product: StoredProduct }) {
 
 const isCustomBanner =
   product.category === "banner" &&
-  product.title !product.title.toLowerCase().includes("BUNDLE");
+  product.title !product.title.toLowerCase().includes("BUNDLE"); };
 
 const displayPrice =
   isCustomBanner ? `from $${product.price.toFixed(0)}` : `$${product.price.toFixed(2)}`;
