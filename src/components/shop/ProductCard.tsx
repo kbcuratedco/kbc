@@ -65,9 +65,12 @@ export function ProductCard({ product }: { product: StoredProduct }) {
     );
   };
 
-  const displayPrice =
-    product.category === "banner" ? `from $${product.price.toFixed(0)}` : `$${product.price.toFixed(2)}`;
+const isCustomBanner =
+  product.category === "banner" &&
+  product.title !== "Banner and Thank You Card Bundle";
 
+const displayPrice =
+  isCustomBanner ? `from $${product.price.toFixed(0)}` : `$${product.price.toFixed(2)}`;
   const handlePrimary = () => {
     if (product.category === "stationery" && !product.digital) {
       setPersonMode("stationery");
@@ -75,9 +78,9 @@ export function ProductCard({ product }: { product: StoredProduct }) {
     } else if (product.category === "sports") {
       setPersonMode("sports");
       setPersonOpen(true);
-    } else if (product.category === "banner") {
-      setBannerOpen(true);
-    } else {
+} else if (isCustomBanner) {
+  setBannerOpen(true);
+} else {
       addToCart({
         productId: product.id,
         title: product.title,
@@ -106,9 +109,9 @@ export function ProductCard({ product }: { product: StoredProduct }) {
   const cta =
     (product.category === "stationery" && !product.digital) || product.category === "sports"
       ? "Personalize"
-      : product.category === "banner"
-        ? "Customize"
-        : "Add to basket";
+    : isCustomBanner
+      ? "Customize"
+      : "Add to basket";
 
   return (
     <article
@@ -315,7 +318,7 @@ export function ProductCard({ product }: { product: StoredProduct }) {
           mode={personMode}
         />
       ) : null}
-      {product.category === "banner" && (
+      {isCustomBanner && (
         <BannerDialog product={product} open={bannerOpen} onOpenChange={setBannerOpen} />
       )}
       {admin && <EditProductDialog product={product} open={editOpen} onOpenChange={setEditOpen} />}
