@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +28,7 @@ export function AddProductDialog() {
   const [price, setPrice] = useState("25");
   const [category, setCategory] = useState<ProductCategory>("stationery");
   const [images, setImages] = useState<string[]>([]);
-  const [sortOrder,setSortOrder] = useState("0");
+  const [sortOrder, setSortOrder] = useState("0");
   const add = useAddProduct();
 
   const onFiles = async (files: FileList | null) => {
@@ -90,7 +96,11 @@ export function AddProductDialog() {
             <div className="flex flex-wrap gap-2">
               {images.map((src, i) => (
                 <div key={i} className="relative">
-                  <img src={src} alt="" className="h-20 w-20 rounded-md border border-border object-cover" />
+                  <img
+                    src={src}
+                    alt=""
+                    className="h-20 w-20 rounded-md border border-border object-cover"
+                  />
                   {i === 0 && (
                     <span className="absolute left-1 top-1 rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
                       Main
@@ -127,22 +137,26 @@ export function AddProductDialog() {
           </div>
           <div className="grid gap-2">
             <Label>Description</Label>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={2}
+            />
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div className="grid gap-2">
               <Label>Price ($)</Label>
               <Input value={price} onChange={(e) => setPrice(e.target.value)} inputMode="decimal" />
             </div>
-             <div className="grid gap-2">
-    <Label>Display Order</Label>
-    <Input
-      type="number"
-      value={sortOrder}
-      onChange={(e) => setSortOrder(e.target.value)}
-      inputMode="numeric"
-    />
-  </div>
+            <div className="grid gap-2">
+              <Label>Display Order</Label>
+              <Input
+                type="number"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                inputMode="numeric"
+              />
+            </div>
             <div className="grid gap-2">
               <Label>Category</Label>
               <div className="flex flex-wrap gap-1">

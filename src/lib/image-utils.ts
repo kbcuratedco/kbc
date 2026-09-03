@@ -4,11 +4,7 @@
 // We downscale to a reasonable max dimension and re-encode as JPEG so
 // what lands in localStorage / the order email stays small.
 
-export async function resizeImageFile(
-  file: File,
-  maxDim = 1400,
-  quality = 0.78,
-): Promise<string> {
+export async function resizeImageFile(file: File, maxDim = 1400, quality = 0.78): Promise<string> {
   const dataUrl = await readAsDataUrl(file);
   try {
     return await resizeImageDataUrl(dataUrl, maxDim, quality);
@@ -52,11 +48,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-async function resizeImageDataUrl(
-  src: string,
-  maxDim: number,
-  quality: number,
-): Promise<string> {
+async function resizeImageDataUrl(src: string, maxDim: number, quality: number): Promise<string> {
   const img = await loadImage(src);
   const { width, height } = img;
   const scale = Math.min(1, maxDim / Math.max(width, height));

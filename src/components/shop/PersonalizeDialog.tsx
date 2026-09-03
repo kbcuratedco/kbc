@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,30 +53,36 @@ export function PersonalizeDialog({
 
   const handleAdd = () => {
     if (!name.trim()) {
-      toast.error(isSports ? "Please add the child's name." : "Please add a name to personalize with.");
+      toast.error(
+        isSports ? "Please add the child's name." : "Please add a name to personalize with.",
+      );
       return;
     }
     try {
       addToCart({
-      productId: product.id,
-      title: product.title,
-      image: product.image,
-      unitPrice: price,
-      quantity: 1,
-      category: product.category,
-      personalization: isSports
-        ? {
-            name: name.trim(),
-            inspoImage: inspoImage || undefined,
-            sportsDetails: { notes: colorNotes.trim() || undefined },
-          }
-        : {
-            name: name.trim(),
-            colorNotes: colorNotes.trim() || undefined,
-            inspoImage: inspoImage || undefined,
-          },
+        productId: product.id,
+        title: product.title,
+        image: product.image,
+        unitPrice: price,
+        quantity: 1,
+        category: product.category,
+        personalization: isSports
+          ? {
+              name: name.trim(),
+              inspoImage: inspoImage || undefined,
+              sportsDetails: { notes: colorNotes.trim() || undefined },
+            }
+          : {
+              name: name.trim(),
+              colorNotes: colorNotes.trim() || undefined,
+              inspoImage: inspoImage || undefined,
+            },
       });
-      toast.success(isSports ? `Added — customized for ${name.trim()}` : `Added — personalized for ${name.trim()}`);
+      toast.success(
+        isSports
+          ? `Added — customized for ${name.trim()}`
+          : `Added — personalized for ${name.trim()}`,
+      );
       setName("");
       setColorNotes("");
       setInspoImage("");
@@ -103,7 +116,9 @@ export function PersonalizeDialog({
               maxLength={40}
             />
             <p className="text-xs text-muted-foreground">
-              {isSports ? "I'll paint this exactly as written." : "I'll hand-letter this exactly as written."}
+              {isSports
+                ? "I'll paint this exactly as written."
+                : "I'll hand-letter this exactly as written."}
             </p>
           </div>
           {isSports && (
@@ -120,44 +135,50 @@ export function PersonalizeDialog({
             </div>
           )}
           {isSports && (
-          <div className="space-y-2">
-            <Label>Inspiration photo (optional)</Label>
-            <div className="flex flex-wrap gap-2">
-              {inspoImage ? (
-                <div className="relative">
-                  <img src={inspoImage} alt="" className="h-24 w-24 rounded-md border border-border object-cover" />
+            <div className="space-y-2">
+              <Label>Inspiration photo (optional)</Label>
+              <div className="flex flex-wrap gap-2">
+                {inspoImage ? (
+                  <div className="relative">
+                    <img
+                      src={inspoImage}
+                      alt=""
+                      className="h-24 w-24 rounded-md border border-border object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setInspoImage("")}
+                      className="absolute -right-2 -top-2 rounded-full bg-foreground/80 p-0.5 text-background"
+                      aria-label="Remove"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => setInspoImage("")}
-                    className="absolute -right-2 -top-2 rounded-full bg-foreground/80 p-0.5 text-background"
-                    aria-label="Remove"
+                    onClick={() => fileRef.current?.click()}
+                    className="dashed-frame flex h-24 w-24 flex-col items-center justify-center gap-1 text-xs text-muted-foreground hover:bg-muted"
                   >
-                    <X className="h-3 w-3" />
+                    <Upload className="h-4 w-4" />
+                    Upload
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileRef.current?.click()}
-                  className="dashed-frame flex h-24 w-24 flex-col items-center justify-center gap-1 text-xs text-muted-foreground hover:bg-muted"
-                >
-                  <Upload className="h-4 w-4" />
-                  Upload
-                </button>
-              )}
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-              />
+                )}
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+                />
+              </div>
             </div>
-          </div>
           )}
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={handleAdd}>Add to cart · ${price.toFixed(2)}</Button>
         </DialogFooter>
       </DialogContent>

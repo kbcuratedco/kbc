@@ -41,8 +41,7 @@ export const claimAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(claimAdminHandler);
 
-export const checkAdmin = createServerFn({ method: "GET" })
-  .handler(checkAdminHandler);
+export const checkAdmin = createServerFn({ method: "GET" }).handler(checkAdminHandler);
 
 // ---------- Admin writes ----------
 
@@ -53,7 +52,9 @@ export const addProduct = createServerFn({ method: "POST" })
 
 export const updateProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { id: string } & Partial<z.infer<typeof productSchema>>) => updateProductSchema.parse(data))
+  .inputValidator((data: { id: string } & Partial<z.infer<typeof productSchema>>) =>
+    updateProductSchema.parse(data),
+  )
   .handler(updateProductHandler);
 
 export const toggleProductActive = createServerFn({ method: "POST" })

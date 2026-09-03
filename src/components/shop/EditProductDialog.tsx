@@ -113,7 +113,8 @@ export function EditProductDialog({
           setDeleteOpen(false);
           onOpenChange(false);
         },
-        onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to delete product"),
+        onError: (err) =>
+          toast.error(err instanceof Error ? err.message : "Failed to delete product"),
       },
     );
   };
@@ -130,7 +131,11 @@ export function EditProductDialog({
             <div className="flex flex-wrap gap-2">
               {images.map((src, i) => (
                 <div key={i} className="relative">
-                  <img src={src} alt="" className="h-20 w-20 rounded-md border border-border object-cover" />
+                  <img
+                    src={src}
+                    alt=""
+                    className="h-20 w-20 rounded-md border border-border object-cover"
+                  />
                   {i === 0 ? (
                     <span className="absolute left-1 top-1 rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
                       Main
@@ -177,7 +182,11 @@ export function EditProductDialog({
           </div>
           <div className="grid gap-2">
             <Label>Description</Label>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-2">
@@ -206,7 +215,12 @@ export function EditProductDialog({
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
             <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
               <AlertDialogTrigger asChild>
-                <Button type="button" variant="outline" className="border-destructive/40 text-destructive hover:bg-destructive/10" disabled={remove.isPending}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="border-destructive/40 text-destructive hover:bg-destructive/10"
+                  disabled={remove.isPending}
+                >
                   <Trash2 className="mr-2 h-4 w-4" /> Delete product
                 </Button>
               </AlertDialogTrigger>
@@ -214,7 +228,8 @@ export function EditProductDialog({
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete this product?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This removes “{product.title}” from your shop for everyone. Use deactivate instead if you may want it back later.
+                    This removes “{product.title}” from your shop for everyone. Use deactivate
+                    instead if you may want it back later.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -232,7 +247,11 @@ export function EditProductDialog({
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <Button className="w-full sm:w-auto" onClick={save} disabled={update.isPending || remove.isPending}>
+            <Button
+              className="w-full sm:w-auto"
+              onClick={save}
+              disabled={update.isPending || remove.isPending}
+            >
               {update.isPending ? "Saving…" : "Save changes"}
             </Button>
           </div>

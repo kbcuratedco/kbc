@@ -1,5 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,7 +56,8 @@ function parseLocalDate(value: string): Date | null {
   const [year, month, day] = parts.map((part) => Number(part));
   if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) return null;
   const date = new Date(year, month - 1, day);
-  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day)
+    return null;
   return date;
 }
 
@@ -144,16 +152,23 @@ export function BannerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="paper-card max-h-[92vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-display text-2xl">Customize your {product.title}</DialogTitle>
+          <DialogTitle className="font-display text-2xl">
+            Customize your {product.title}
+          </DialogTitle>
           <DialogDescription>
-            Each banner is hand-drawn from scratch. Share the details and any inspo — I'll do the rest.
+            Each banner is hand-drawn from scratch. Share the details and any inspo — I'll do the
+            rest.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-5 py-2">
           <div>
             <Label className="mb-2 block">Size</Label>
-            <RadioGroup value={size} onValueChange={(v) => setSize(v as BannerSizeId)} className="grid grid-cols-3 gap-2">
+            <RadioGroup
+              value={size}
+              onValueChange={(v) => setSize(v as BannerSizeId)}
+              className="grid grid-cols-3 gap-2"
+            >
               {BANNER_SIZES.map((s) => (
                 <label
                   key={s.id}
@@ -192,7 +207,13 @@ export function BannerDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="bname">Name on banner</Label>
-              <Input id="bname" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} placeholder="e.g. Benjamin" />
+              <Input
+                id="bname"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={40}
+                placeholder="e.g. Benjamin"
+              />
             </div>
           </div>
 
@@ -213,7 +234,11 @@ export function BannerDialog({
             <div className="flex flex-wrap gap-2">
               {inspo.map((src, i) => (
                 <div key={i} className="relative">
-                  <img src={src} alt="" className="h-20 w-20 rounded-md border border-border object-cover" />
+                  <img
+                    src={src}
+                    alt=""
+                    className="h-20 w-20 rounded-md border border-border object-cover"
+                  />
                   <button
                     type="button"
                     onClick={() => setInspo((p) => p.filter((_, ix) => ix !== i))}
@@ -247,7 +272,9 @@ export function BannerDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
           <Button onClick={handleAdd}>Add to cart · ${price}</Button>
         </DialogFooter>
       </DialogContent>

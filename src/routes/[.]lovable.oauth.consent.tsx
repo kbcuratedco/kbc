@@ -96,8 +96,8 @@ function Consent() {
           Connect <em className="not-italic">{clientName}</em> to KB Curated Co
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This lets {clientName} browse your product catalog and shop info as you.
-          It doesn't grant access to your account settings or bypass site permissions.
+          This lets {clientName} browse your product catalog and shop info as you. It doesn't grant
+          access to your account settings or bypass site permissions.
         </p>
         {error && (
           <p role="alert" className="mt-4 text-sm text-destructive">

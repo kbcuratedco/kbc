@@ -34,7 +34,7 @@ export interface Personalization {
 }
 
 export interface CartItem {
-  key: string;            // unique per config
+  key: string; // unique per config
   productId: string;
   title: string;
   image: string;
@@ -48,7 +48,7 @@ export interface CartItem {
     dateNeeded: string;
     name: string;
     theme: string;
-    inspoImages: string[];           // data URLs
+    inspoImages: string[]; // data URLs
   };
 }
 
@@ -93,7 +93,8 @@ export function useCart() {
 }
 
 export function addToCart(item: Omit<CartItem, "key"> & { key?: string }) {
-  const key = item.key ?? `${item.productId}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+  const key =
+    item.key ?? `${item.productId}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   const items = readCart();
   items.push({ ...item, key });
   writeCart(items);

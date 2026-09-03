@@ -3,7 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Check, X, Sparkles, Trash2, Eye, EyeOff, Settings2, Loader2 } from "lucide-react";
 import { useAdminMode, addToCart } from "@/lib/shop-store";
-import { useToggleProductActive, useRemoveProduct, useUpdateProduct, type StoredProduct } from "@/lib/product-store";
+import {
+  useToggleProductActive,
+  useRemoveProduct,
+  useUpdateProduct,
+  type StoredProduct,
+} from "@/lib/product-store";
 import { PersonalizeDialog } from "./PersonalizeDialog";
 import { BannerDialog } from "./BannerDialog";
 import { EditProductDialog } from "./EditProductDialog";
@@ -65,12 +70,12 @@ export function ProductCard({ product }: { product: StoredProduct }) {
     );
   };
 
-const isCustomBanner =
-  product.category === "banner" &&
-  !product.title.toLowerCase().includes("bundle");
+  const isCustomBanner =
+    product.category === "banner" && !product.title.toLowerCase().includes("bundle");
 
-const displayPrice =
-  isCustomBanner ? `from $${product.price.toFixed(0)}` : `$${product.price.toFixed(2)}`;
+  const displayPrice = isCustomBanner
+    ? `from $${product.price.toFixed(0)}`
+    : `$${product.price.toFixed(2)}`;
   const handlePrimary = () => {
     if (product.category === "stationery" && !product.digital) {
       setPersonMode("stationery");
@@ -78,9 +83,9 @@ const displayPrice =
     } else if (product.category === "sports") {
       setPersonMode("sports");
       setPersonOpen(true);
-} else if (isCustomBanner) {
-  setBannerOpen(true);
-} else {
+    } else if (isCustomBanner) {
+      setBannerOpen(true);
+    } else {
       addToCart({
         productId: product.id,
         title: product.title,
@@ -101,7 +106,8 @@ const displayPrice =
           toast.success("Product deleted from the shop");
           setDeleteOpen(false);
         },
-        onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to delete product"),
+        onError: (err) =>
+          toast.error(err instanceof Error ? err.message : "Failed to delete product"),
       },
     );
   };
@@ -109,9 +115,9 @@ const displayPrice =
   const cta =
     (product.category === "stationery" && !product.digital) || product.category === "sports"
       ? "Personalize"
-    : isCustomBanner
-      ? "Customize"
-      : "Add to basket";
+      : isCustomBanner
+        ? "Customize"
+        : "Add to basket";
 
   return (
     <article
@@ -173,8 +179,10 @@ const displayPrice =
                 toggleActive.mutate(
                   { id: product.id, active: product.active === false },
                   {
-                    onSuccess: () => toast.success(product.active === false ? "Activated" : "Deactivated"),
-                    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to update"),
+                    onSuccess: () =>
+                      toast.success(product.active === false ? "Activated" : "Deactivated"),
+                    onError: (err) =>
+                      toast.error(err instanceof Error ? err.message : "Failed to update"),
                   },
                 )
               }
@@ -200,14 +208,19 @@ const displayPrice =
                   aria-label="Delete product"
                   title="Delete product"
                 >
-                  {remove.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 text-destructive" />}
+                  {remove.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  )}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete this product?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This removes “{product.title}” from your shop for everyone. Use deactivate instead if you may want it back later.
+                    This removes “{product.title}” from your shop for everyone. Use deactivate
+                    instead if you may want it back later.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -279,9 +292,18 @@ const displayPrice =
                   disabled={update.isPending}
                   aria-label="Save price"
                 >
-                  {update.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                  {update.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
                 </Button>
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(false)}>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={() => setEditing(false)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
