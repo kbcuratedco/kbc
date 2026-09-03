@@ -43,7 +43,11 @@ export function productsQueryOptions(activeOnly = false) {
     queryKey: [...PRODUCTS_KEY, { activeOnly }],
     queryFn: async () => {
       const rows = await listProducts({ data: { activeOnly } });
-      return normalize(rows);
+      return normalize(rows).sort((a, b) => {
+  if (a.sortOrder === 0 && b.sortOrder === 0) return 0;
+  if (a.sortOrder === 0) return 1;
+  if (b.sortOrder === 0) return -1;
+  return a.sortOrder - b.sortOrder;
     },
   });
 }
